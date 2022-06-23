@@ -1,0 +1,9 @@
+*.o
+*.d
+*.a
+*.so*
+.deps
+cmd_ring_rx
+test-tun-pdu
+reader-test
+.*.swp
