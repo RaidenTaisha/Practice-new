@@ -4,8 +4,6 @@
 using namespace std;
 int main(int argc, char *argv[])
 {
-
-    string str = "Баженблять";
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
