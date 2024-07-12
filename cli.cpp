@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]) {
+int cli(int argc, char* argv[]) {
     setlocale(LC_ALL, ".1251");
     // Проверка количества аргументов
     if (argc != 8) {
