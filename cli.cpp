@@ -68,12 +68,12 @@ int main(int argc, char *argv[])
 int fragment(ifstream &file, int n)
 {
     // Проверка маркера начала заголовка
-    char headerMarker[3];
+    /*TODO char headerMarker[3];
     file.read(headerMarker, 3);
     if (strncmp(headerMarker, "GSE", 3) != 0)
     {
         throw runtime_error("Не найден маркер заголовка GSE");
-    }
+    }*/
 
     // Считываем три байта из фалйа, где первые 4 бита это метки S-1бит, E-1бит и L-2бит + 12бит GSE lenght + 8бит Frag ID
     char head[3];
@@ -92,7 +92,7 @@ int fragment(ifstream &file, int n)
     if (k < n * 2 || n < 1)
     {
         cerr << "net smisla v fragmentasii, kolvo bayt = " << k << " kolvo fragmentov = " << n;
-        return 5;
+        exit(5);
     }
 
     for (int i = 0; i < n; ++i)
@@ -125,20 +125,20 @@ int fragment(ifstream &file, int n)
         string filename = "file" + to_string(i) + ".bin";
 
         // создать и открыть их
-        fstream outfile(filename, ios::out | ios::binary);
+        ofstream outfile(filename, ios::binary);
 
         // Проверочка
         if (!outfile.is_open())
         {
             cerr << "ne otkrilis fali blyad";
-            return 6;
+            exit(6);
         }
 
         // собираем все 3 байта начального заголовка ( которые чутка подправили и есть у всех пакетов) в массив и шлем их в пакеты
         char chdata[3] = {getCharByBit(data0), getCharByBit(data1), getCharByBit(data2)};
 
         // Записываем GSE метку заголовка и сам заголовок
-        outfile.write(headerMarker, sizeof(headerMarker));
+        //TODO outfile.write(headerMarker, sizeof(headerMarker));
         outfile.write(chdata, sizeof(chdata));
         // закрываем фалики, так как надо их потом заново открывать
         outfile.close();
@@ -153,33 +153,34 @@ int fragment(ifstream &file, int n)
         // Создаем путик файлика
         string filename = "file" + to_string(i) + ".bin";
 
-        // создать и открыть их
-        fstream outfile(filename, ios::ate | ios::binary);
+        //открыть их
+        ofstream outfile(filename, ios::ate | ios::binary);
 
         // Проверочка
         if (!outfile.is_open())
         {
             cerr << "ne otkrilis fali blyad";
-            return 8;
+            exit(8);
         }
 
         // Если n первый пакет, то записываем поля полей total lenth 2байта, protocol type 2байта, label 3байта или 6байт и sizeofpack, если последний, то lastsize + конец, остальные sizeofpack
-
         if (i == 0)
-        { // Для первого пакета
+        {
+            // Для первого пакета
             char data[4 + t + sizeOfPack];
             file.read(data, 4 + t + sizeOfPack);
             outfile.write(data, 4 + t + sizeOfPack);
         }
         else if (i == n - 1)
-        { // Для последнего
-            int temp = lastsize + sizeof(file) - 7 - t - k;
-            char data[temp];
-            file.read(data, temp);
-            outfile.write(data, temp);
+        {
+            // Для последнего
+            char data[lastsize + 4];
+            file.read(data, lastsize + 4);
+            outfile.write(data, lastsize + 4);
         }
         else
-        { // Для остальных
+        {
+            // Для остальных
             char data[sizeOfPack];
             file.read(data, sizeOfPack);
             outfile.write(data, sizeOfPack);
