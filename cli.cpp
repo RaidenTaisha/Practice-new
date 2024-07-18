@@ -23,7 +23,7 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
     // Открытие входного файла
     ifstream inputFileStream(inputFile, ios::binary);
     if (!inputFileStream.is_open()) {
-        cerr << "Не удалось открыть файл: " << inputFile << endl;
+        cerr << "ne fayl: " << inputFile << endl;
         return;
     }
 
@@ -59,17 +59,17 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
                 } else if (c == ':') {
                     // Проверка правильности формата метки времени
                     if (timestampBytes.size() != 2) {
-                        cerr << "Неверный формат метки времени: " << l << endl;
+                        cerr << "ne to t: " << l << endl;
                         return;
                     }
                     timestampBytes.clear();
                 } else {
-                    cerr << "Неверный формат метки времени: " << l << endl;
+                    cerr << "ne to t: " << l << endl;
                     return;
                 }
             }
             if (timestampBytes.size() != 2) {
-                cerr << "Неверный формат метки времени: " << l << endl;
+                cerr << "ne to t: " << l << endl;
                 return;
             }
         } else if (t == 6) {
@@ -79,21 +79,21 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
                 } else if (c == ':') {
                     // Проверка правильности формата метки времени
                     if (timestampBytes.size() != 5) {
-                        cerr << "Неверный формат метки времени: " << l << endl;
+                        cerr << "ne to t: " << l << endl;
                         return;
                     }
                     timestampBytes.clear();
                 } else {
-                    cerr << "Неверный формат метки времени: " << l << endl;
+                    cerr << "ne to t: " << l << endl;
                     return;
                 }
             }
             if (timestampBytes.size() != 5) {
-                cerr << "Неверный формат метки времени: " << l << endl;
+                cerr << "ne to t: " << l << endl;
                 return;
             }
         } else {
-            cerr << "Неверный размер метки времени: " << t << " байт" << endl;
+            cerr << "ne to t: " << t << " байт" << endl;
             return;
         }
 
@@ -107,7 +107,7 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
         // Открытие выходного файла
         ofstream outputFileStream(outputFileName, ios::binary);
         if (!outputFileStream.is_open()) {
-            cerr << "Не удалось открыть файл: " << outputFileName << endl;
+            cerr << "ne fayl: " << outputFileName << endl;
             return;
         }
 
@@ -143,17 +143,17 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
                 } else if (c == ':') {
                     // Проверка правильности формата метки времени
                     if (timestampBytes.size() != 2) {
-                        cerr << "Неверный формат метки времени: " << l << endl;
+                        cerr << "ne to t: " << l << endl;
                         return;
                     }
                     timestampBytes.clear();
                 } else {
-                    cerr << "Неверный формат метки времени: " << l << endl;
+                    cerr << "ne to t: " << l << endl;
                     return;
                 }
             }
             if (timestampBytes.size() != 2) {
-                cerr << "Неверный формат метки времени: " << l << endl;
+                cerr << "ne to t: " << l << endl;
                 return;
             }
         } else if (t == 6) {
@@ -163,21 +163,21 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
                 } else if (c == ':') {
                     // Проверка правильности формата метки времени
                     if (timestampBytes.size() != 5) {
-                        cerr << "Неверный формат метки времени: " << l << endl;
+                        cerr << "ne to t: " << l << endl;
                         return;
                     }
                     timestampBytes.clear();
                 } else {
-                    cerr << "Неверный формат метки времени: " << l << endl;
+                    cerr << "ne to t: " << l << endl;
                     return;
                 }
             }
             if (timestampBytes.size() != 5) {
-                cerr << "Неверный формат метки времени: " << l << endl;
+                cerr << "ne to t: " << l << endl;
                 return;
             }
         } else {
-            cerr << "Неверный размер метки времени: " << t << " байт" << endl;
+            cerr << "ne to t: " << t << " байт" << endl;
             return;
         }
 
@@ -192,7 +192,7 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
         // Открытие выходного файла
         ofstream outputFileStream(outputFileName, ios::binary);
         if (!outputFileStream.is_open()) {
-            cerr << "Не удалось открыть файл: " << outputFileName << endl;
+            cerr << "ne fayl: " << outputFileName << endl;
             // Запись GSE-заголовка в выходной файл
             outputFileStream.write(reinterpret_cast<char*>(&header), sizeof(GSEHeader));
 
@@ -208,7 +208,7 @@ void fragmentPacket(const string& inputFile, int n, int f, unsigned int p, int t
     }
 }
 
-int cli(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
     setlocale(LC_ALL, ".1251");
     // Проверка количества аргументов
     if (argc != 12) {
@@ -233,7 +233,7 @@ int cli(int argc, char* argv[]) {
     }
 
     // Проверка допустимых меток параметров
-    if (string(argv[2]) != "-n" || string(argv[4]) != "-f" || string(argv[6]) != "-p" || string(argv[9]) != "-t" || string(argv[11]) != "-l") {
+    if (string(argv[2]) != "-n" || string(argv[4]) != "-f" || string(argv[6]) != "-p" || string(argv[8]) != "-t" || string(argv[10]) != "-l") {
         cerr << "nete metki. -n, -f and -p." << endl;
         return 1;
     }
