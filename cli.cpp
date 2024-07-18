@@ -217,7 +217,8 @@ int cli(int argc, char* argv[]) {
     }
 
     // Проверка параметров
-    int n,f,t,l;
+    int n,f,t;
+    string l;
     unsigned int p;
 
     try {
