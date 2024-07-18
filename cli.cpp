@@ -1,54 +1,54 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
-
-
+#include <cstring>
 using namespace std;
 
-
-
-int cli(int argc, char* argv[]) {
+int fragment(ifstream& file, int n);
+    //cli[0] pack.bin[1] -n[2] 3[3]
+int main(int argc, char* argv[]) {
     setlocale(LC_ALL, ".1251");
     // Проверка количества аргументов
     if (argc != 4) {
-        cerr << "Ne vernoe kolvo simvolov. Ucpolzovanue: " << argv[0] << " -n <chislo> -f <chislo> -p <16-oe chislo> <vzodnoi file>" << endl;
-        return 1;
-    }
-
-    // Проверка параметров
-    int n,f,t;
-    string l;
-    unsigned int p;
-
-    try {
-        n = stoi(string(argv[3]));
-        //f = stoi(string(argv[5]));
-        //p = stoul(string(argv[7]), nullptr, 16);
-        //t = stoi(string(argv[9]));
-        //l = stoi(string(argv[11]));
-    } catch (const invalid_argument& e) {
-        cerr << "Oshibka preobrazovanua elimentov. -n, -f and -p ." << endl;
-        return 1;
-    }
-    //|| string(argv[4]) != "-f" || string(argv[6]) != "-p"|| string(argv[8]) != "-t" || string(argv[10]) != "-l"
-    // Проверка допустимых меток параметров
-    if (string(argv[2]) != "-n"  ) {
-        cerr << "nete metki. -n, -f and -p." << endl;
+        cerr << "Ne vernoe kolvo simvolov. Ucpolzovanue: " << argv[0] << "<file.bin> -n <chislo>" << endl;
         return 1;
     }
 
     // Открытие входного файла
+    //
     ifstream inputFile(argv[1], ios::binary);
     if (!inputFile.is_open()) {
         cerr << "Ne otkr file: " << argv[1] << endl;
-        return 1;
+        return 2;
     }
 
+    // Проверка допустимых меток параметров
+    if (string(argv[2]) != "-n"  ) {
+        cerr << "nete metki. -n" << endl;
+        return 3;
+    }
 
+    // Проверка параметров
+    int n;
+    try {
+        n = stoi(string(argv[3]));
+    } catch (const invalid_argument& e) {
+        cerr << "Oshibka preobrazovanua elimentov: -n" << endl;
+        return 4;
+    }
 
+    fragment(inputFile, n);
     inputFile.close();
+    return 0;
+}
 
+int fragment(ifstream& file, int n){
+    // Проверка маркера начала заголовка
+    char headerMarker[3];
+    file.read(headerMarker, 3);
+    if (strncmp(headerMarker, "GSE", 3) != 0) {
+        throw runtime_error("Не найден маркер заголовка GSE");
+    }
     return 0;
 }
 
