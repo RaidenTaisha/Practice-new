@@ -49,6 +49,33 @@ int fragment(ifstream& file, int n){
     if (strncmp(headerMarker, "GSE", 3) != 0) {
         throw runtime_error("Не найден маркер заголовка GSE");
     }
+
+    for (int i = 0; i < n; ++i) {
+        // Создать имя файла
+        string filename = "file" + to_string(i) + ".bin";
+
+        // Открыть файл в двоичном режиме записи
+        fstream outfile(filename, ios::out | ios::binary);
+
+        // Проверить, открылся ли файл
+        if (outfile.is_open())
+        {
+            // Записать данные в файл (в данном примере - просто число)
+            string data = "GSE";
+            outfile.write((char *)&data, sizeof(data));
+
+            // Закрыть файл
+            outfile.close();
+        }
+    }
+
+    char infpok[5];
+    //5 байт
+    //в конце 12 бит длины пакета
+    file.read(infpok, 5);
+
+
+    
     return 0;
 }
 
