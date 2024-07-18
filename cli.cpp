@@ -18,17 +18,17 @@ struct sByte
 
 char getCharByBit(sByte data);
 int binary_to_decimal(string binary_string);
-int fragment(ifstream &file, int n);
+int fragment(ifstream &file, int n, int t, char *f, char *p, char *l);
 sByte getByteInBit(char data);
 
-// cli[0] pack.bin[1] -n[2] 3[3] пример запуска
+// cli[0] pack.bin[1] -n[2] 3[3] -f[4] 5[5] -p[6] 0x800[7] -t[8] 3[9] 01:02:02[10] пример запуска
 int main(int argc, char *argv[])
 {
     setlocale(LC_ALL, ".1251");
     // Проверка количества аргументов
-    if (argc != 4)
+    if (argc != 11)
     {
-        cerr << "Ne vernoe kolvo simvolov. Ucpolzovanue: " << argv[0] << "<file.bin> -n <chislo>" << endl;
+        cerr << "Ne vernoe kolvo simvolov. Ucpolzovanue: <file.bin> -n <chislo> -f <chislo> -p <chislo> -t <chislo> <01:02:03> " << endl;
         return 1;
     }
 
@@ -48,24 +48,46 @@ int main(int argc, char *argv[])
         return 3;
     }
 
+    // Проверка допустимых меток параметров
+    if (string(argv[4]) != "-f")
+    {
+        cerr << "nete metki. -f" << endl;
+        return 4;
+    }
+
+    if (string(argv[6]) != "-p")
+    {
+        cerr << "nete metki. -p" << endl;
+        return 4;
+    }
+
+    if (string(argv[8]) != "-t")
+    {
+        cerr << "nete metki. -t" << endl;
+        return 4;
+    }
     // Проверка параметров
-    int n;
+    int n,t;
+    char *p = argv[7];
+    char *f = argv[5];
+    char *l = argv[10];
     try
     {
         n = stoi(string(argv[3]));
+        t = stoi(string(argv[9]));
     }
     catch (const invalid_argument &e)
     {
         cerr << "Oshibka preobrazovanua elimentov: -n" << endl;
-        return 4;
+        return 5;
     }
     // фрагментация пакета
-    fragment(inputFile, n);
+    fragment(inputFile, n,t,f,p,l);
     inputFile.close();
     return 0;
 }
 
-int fragment(ifstream &file, int n)
+int fragment(ifstream &file, int n, int t, char *f, char *p, char *l)
 {
     // Проверка маркера начала заголовка
     /*TODO char headerMarker[3];
@@ -135,7 +157,7 @@ int fragment(ifstream &file, int n)
         }
 
         // собираем все 3 байта начального заголовка ( которые чутка подправили и есть у всех пакетов) в массив и шлем их в пакеты
-        char chdata[3] = {getCharByBit(data0), getCharByBit(data1), getCharByBit(data2)};
+        char chdata[3] = {getCharByBit(data0), getCharByBit(data1), *f};
 
         // Записываем GSE метку заголовка и сам заголовок
         //TODO outfile.write(headerMarker, sizeof(headerMarker));
@@ -144,7 +166,6 @@ int fragment(ifstream &file, int n)
         outfile.close();
     }
 
-    int t = 3;
     // определяем кол-во байтов которые нада распределить по п`окетам
     int sizeOfPack = k / n;
     int lastsize = sizeOfPack + k % n;
@@ -167,21 +188,30 @@ int fragment(ifstream &file, int n)
         if (i == 0)
         {
             // Для первого пакета
-            char data[4 + t + sizeOfPack];
-            file.read(data, 4 + t + sizeOfPack);
-            outfile.write(data, 4 + t + sizeOfPack);
+            //char*  data = new char[4 + t + sizeOfPack];
+            //file.read(data, 4 + t + sizeOfPack);
+            //outfile.write(data, 4 + t + sizeOfPack);
+            char*  data = new char[4 + t];
+            file.read(data, 4 + t);
+            outfile.write(data,2);
+            outfile.write(p,2);
+            outfile.write(l,t);
+             char*  data1 = new char[sizeOfPack];
+            file.read(data1,sizeOfPack);
+            outfile.write(data1, sizeOfPack);
+            
         }
         else if (i == n - 1)
         {
             // Для последнего
-            char data[lastsize + 4];
+            char *data = new char[lastsize + 4];
             file.read(data, lastsize + 4);
             outfile.write(data, lastsize + 4);
         }
         else
         {
             // Для остальных
-            char data[sizeOfPack];
+            char *data= new char[sizeOfPack];
             file.read(data, sizeOfPack);
             outfile.write(data, sizeOfPack);
         }
